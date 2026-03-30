@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 typedef struct {
     char nome[51];
     char local[100];
@@ -15,14 +16,20 @@ typedef struct {
     int bonus_dano;
 } Personagem;
 
+
+
 void limparTela() {
     system("cls || clear");
 }
+
+
 
 void pausa() {
     printf("\nPressione ENTER para continuar...");
     getchar();
 }
+
+
 
 void grava(Personagem p) {
     FILE *f = fopen("save.dat", "wb");
@@ -35,6 +42,7 @@ void grava(Personagem p) {
     }
 }
 
+
 int le(Personagem *p) {
     FILE *f = fopen("save.dat", "rb");
     if (f) {
@@ -45,6 +53,8 @@ int le(Personagem *p) {
     return 0;
 }
 
+// Pontuação
+
 void recorde(Personagem p) {
     FILE *f = fopen("ranking.txt", "a");
     if (f) {
@@ -52,6 +62,8 @@ void recorde(Personagem p) {
         fclose(f);
     }
 }
+
+// Ranking 
 
 void ranking() {
     FILE *f = fopen("ranking.txt", "r");
@@ -67,10 +79,13 @@ void ranking() {
     }
 }
 
+//Créditos a quem criou o jogo (nesse caso, fui só eu mesmo)
+
 void listarIntegrantes() {
     printf("\nIntegrantes do grupo:\n");
     printf("- Nicolas Maciel\n");
 }
+
 
 void criar(Personagem *p) {
     limparTela();
@@ -79,6 +94,8 @@ void criar(Personagem *p) {
     fgets(p->nome, 51, stdin);
     p->nome[strcspn(p->nome, "\n")] = '\0';
 
+    // Inicializa com 10 pontos a serem distribuídos entre os atributos dispníveis
+    
     int pontos = 10;
     p->forca = p->inteligencia = p->sabedoria = p->carisma = 0;
 
@@ -101,6 +118,8 @@ void criar(Personagem *p) {
         }
     }
 
+    //Inicializa o personagem com os status padrão
+    
     p->vida = 100;
     p->sanidade = 100;
     p->energia = 60;
@@ -153,6 +172,8 @@ void combate(Personagem *jogador, Personagem *inimigo) {
 
        int dano = 5 + jogador->inteligencia * 2 + jogador->bonus_dano;
 
+        // Estudar aumenta o dano, mas reduz sanidade
+        
         if (escolha == 2) {
             jogador->sanidade -= 15;
             jogador->estudou++;
@@ -160,6 +181,9 @@ void combate(Personagem *jogador, Personagem *inimigo) {
             inimigo->vida -= dano;
             printf("Voce estudou e causou %d de dano.\n", dano);
         }
+
+        //Descansar aumenta a sanidade, mas reduz dano
+            
         else if (escolha == 3) {
             jogador->sanidade += 10;
             jogador->descansou++;
@@ -168,6 +192,9 @@ void combate(Personagem *jogador, Personagem *inimigo) {
             inimigo->vida -= dano;
             printf("Voce descansou e causou %d de dano.\n", dano);
         }
+            
+        //Usa energia para recuperar vida
+            
          else if (escolha == 4) {
             if (jogador->energia >= 10) {
                 jogador->energia -= 10;
@@ -179,6 +206,9 @@ void combate(Personagem *jogador, Personagem *inimigo) {
                 continue;
             }
         }
+             
+        //Ataque simples
+             
         else if (escolha == 1) {
             inimigo->vida -= dano;
             printf("Voce causou %d de dano.\n", dano);
@@ -197,11 +227,15 @@ void combate(Personagem *jogador, Personagem *inimigo) {
         }
     }
 
+    // Começa a perder vida quando a sanidade fica abaixo de 30
+    
     if (jogador->sanidade < 30) {
         jogador->vida -= 10;
         printf("Sua sanidade esta baixa, voce perdeu 10 de vida.\n");
     }
 
+    //Perde se a vida ou sanidade chegar a 0
+    
     if (jogador->vida <= 0 || jogador->sanidade <= 0) {
         printf("\nVoce perdeu!\n");
         exit(0);
@@ -381,6 +415,8 @@ void capitulo6(Personagem *p) {
     combate(p, &inimigo);
     p->capitulo++;
 }
+
+// O jogador terá um final diferente a depender de suas escolhas ao decorrer do jogo
 
 void final(Personagem *p) {
     limparTela();
